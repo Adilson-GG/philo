@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror 
 
 NAME = philo
 
@@ -8,7 +8,7 @@ SRC_PATH = sources/
 
 OBJ_PATH = objets/
 
-SRC = philo.c errors.c
+SRC = philo.c errors.c start.c utils.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -24,7 +24,7 @@ all : $(NAME)
 
 
 $(NAME) : $(PREFO)
-	@$(CC) $(CFLAGS)  -o $(NAME) $(PREFO) -g3
+	@$(CC) $(CFLAGS)  -o $(NAME) $(PREFO) -g3 -lpthread
 	@echo "Compilation terminee !"
 
 

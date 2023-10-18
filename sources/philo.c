@@ -6,36 +6,52 @@
 /*   By: agomes-g <agomes-g@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/22 08:56:31 by agomes-g          #+#    #+#             */
-/*   Updated: 2023/09/24 13:16:46 by agomes-g         ###   ########.fr       */
+/*   Updated: 2023/09/26 11:39:05 by agomes-g         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 
-t_data	*init_data(int ac, char **av)
+void	free_forks(pthread_mutex_t *forks, t_data *data, int i)
 {
-	t_data	*data;
+	int	j;
 
-	data = (t_data *)malloc(sizeof(t_data));
-	if (!data)
-		return (NULL);
-	data->num_philo = ft_atoi(av[1]);
-	data->time_to_die = ft_atoi(av[2]);
-	data->time_to_eat = ft_atoi(av[3]);
-	data->time_to_sleep = ft_atoi(av[4]);
-	if (ac == 6)
-		data->num_meal = ft_atoi(av[5]);
-	else
-		data->num_meal = -1;
-	return (data);
+	j = -1;
+	while (++j <= i)
+		pthread_mutex_destroy(&forks[i]);
+	if (j >= 0 && j != data->num_philo)
+		printf("Can't init forks");
+	free(forks);
 }
 
-void	free_all(t_data *data, pthread_mutex_t *forks, int i)//, pthread_t *philosophers)
+void	wait_thread(t_data *data, pthread_t *philosophers)
 {
-	if (data)
-		free(data);
-	if (forks)
-		free_forks(forks, data, i);
+	int	i;
+
+	i = -1;
+	while (++i < data->num_philo)
+		pthread_join(philosophers[i], NULL);
+}
+
+int	execute(t_data *data, pthread_mutex_t *forks, pthread_t *philosophers)
+{
+//	t_philo	*philo;
+	
+//	philo = init_philo(data);
+	if (!(data->philo))
+	{
+		printf("Can't init philosophers");
+		return (free_all(data, forks, -1), 1);
+	}
+	if (init_forks(forks, data))
+		return (1);
+	if (init_threads(philosophers, data, data->philo))
+	{
+		printf("Can't create philosophers's threads");
+		return (free_all(data, forks, data->num_philo -1), 1);
+	}
+	wait_thread(data, philosophers);
+	return (0);
 }
 
 int	main(int argc, char **argv)
